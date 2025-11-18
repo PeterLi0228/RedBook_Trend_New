@@ -607,12 +607,13 @@ function ensureSidePanel() {
   panel.style.border = "1px solid rgba(0,0,0,0.12)";
   panel.style.borderRadius = "4px";
   panel.style.boxShadow = "0 2px 8px rgba(15, 23, 42, 0.15)";
-  panel.style.padding = "8px 10px";
+  panel.style.padding = "8px 12px";
   panel.style.fontFamily =
     'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
   panel.style.fontSize = "12px";
   panel.style.color = "#1f2933";
-  panel.style.maxWidth = "340px";
+  panel.style.minWidth = "360px";
+  panel.style.maxWidth = "400px";
 
   panel.innerHTML = `
     <div style="margin-bottom:6px;">
@@ -638,7 +639,7 @@ function ensureSidePanel() {
       成交榜账号缓存：<span id="xhs-account-rank-row-count">0</span>
     </div>
     <div style="margin-bottom:4px;display:flex;flex-wrap:wrap;gap:4px;">
-      <button id="xhs-account-rank-btn-collect" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">采集成交榜账号当前页</button>
+      <button id="xhs-account-rank-btn-collect" style="flex:1.5 0 120px;padding:3px 6px;font-size:12px;cursor:pointer;">采集成交榜账号当前页</button>
       <button id="xhs-account-rank-btn-download" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">导出账号 CSV</button>
     </div>
     <div style="margin-bottom:4px;">
