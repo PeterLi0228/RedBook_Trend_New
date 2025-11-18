@@ -1,15 +1,9 @@
 /* global chrome */
 
-// 本地存储 key
-const STORAGE_KEY = "xhsNoteRankRows"; // 内容榜（笔记排行）
-const ACCOUNT_STORAGE_KEY = "xhsAccountRankRows"; // 成交榜优秀账号
+/* 内容榜（笔记排行）缓�?key */ const STORAGE_KEY = "xhsNoteRankRows";
+/* 成交榜优秀账号缓存 key */ const ACCOUNT_STORAGE_KEY = "xhsAccountRankRows";
 
-// 是否排除每页第一行（通常为自营账号）
-// 默认：false（包含第一行）
-let excludeFirstRow = false;
-
-// 规范化表头/单元格文本
-function normalizeText(text) {
+/* 规范化表�?单元格文�?*/ function normalizeText(text) {
   return (text || "")
     .replace(/\s+/g, "")
     .replace(/\uFFFD/g, "")
@@ -17,7 +11,7 @@ function normalizeText(text) {
 }
 
 // 获取“逻辑上的获取日期”（只有日期，不含时间）
-// 规则：如果当前时间 < 10:00，则视为前一天的数据；否则视为当天的数据
+// 规则：如果当前时�?< 10:00，则视为前一天的数据；否则视为当天的数据
 function getLogicalFetchDate() {
   const now = new Date();
   const adjusted = new Date(now);
@@ -33,9 +27,7 @@ function getLogicalFetchDate() {
 }
 
 /**
- * 从「市场行情-笔记排行」页面抽取当前页数据（内容榜）
- * 字段：标题、账号昵称、发布时间、阅读数、点击率、支付转化率、GMV、笔记链接、获取时间
- */
+ * 从「市场行�?笔记排行」页面抽取当前页数据（内容榜�? * 导出字段：排名、笔记标题、账号昵称、发布时间、笔记阅读数�? *          笔记商品点击率、笔记支付转化率、笔记成交金额（元）、获取时�? */
 function collectNoteRankFromDom() {
   const root =
     document.querySelector(".note-rank") ||
@@ -45,7 +37,7 @@ function collectNoteRankFromDom() {
   if (!root) {
     return {
       ok: false,
-      error: "未找到 note-rank 容器，请确认当前为笔记排行页面。"
+      error: "未找�?note-rank 容器，请确认当前为笔记排行页面�?
     };
   }
 
@@ -57,7 +49,7 @@ function collectNoteRankFromDom() {
   if (!table) {
     return {
       ok: false,
-      error: "未找到表格，请确认已切换到“笔记排行”并等待页面加载完成。"
+      error: "未找到表格，请确认已切换到“笔记排行”并等待页面加载完成�?
     };
   }
 
@@ -66,7 +58,7 @@ function collectNoteRankFromDom() {
   );
 
   if (headerCells.length === 0) {
-    return { ok: false, error: "未找到表头，请确认页面已完全加载。" };
+    return { ok: false, error: "未找到表头，请确认页面已完全加载�? };
   }
 
   const columnIndex = {
@@ -103,21 +95,20 @@ function collectNoteRankFromDom() {
   if (columnIndex.noteInfo === -1) {
     return {
       ok: false,
-      error: "未找到“笔记”信息列，请确认当前表格为笔记排行。"
+      error: "未找到“笔记”信息列，请确认当前表格为笔记排行�?
     };
   }
 
   const tbody = table.querySelector("tbody");
   if (!tbody) {
-    return { ok: false, error: "未找到表格主体（tbody）。" };
+    return { ok: false, error: "未找到表格主体（tbody）�? };
   }
 
   const allRows = Array.from(tbody.querySelectorAll("tr")).filter(
     (tr) => tr.querySelectorAll("td").length > 0
   );
 
-  // 根据配置决定是否跳过第一行
-  const rows = excludeFirstRow ? allRows.slice(1) : allRows;
+  // 每页第一行通常为自己的账号，按需求跳�?  const rows = allRows.slice(1);
 
   const getCellText = (cell) =>
     cell
@@ -179,6 +170,7 @@ function collectNoteRankFromDom() {
       payConversionRate: getByIndex(columnIndex.payConversionRate),
       gmv: getByIndex(columnIndex.gmv),
       noteUrl,
+      // 新增：获取时间（�?10 点规则计算）
       fetchDate
     };
   });
@@ -188,8 +180,7 @@ function collectNoteRankFromDom() {
 
 /**
  * 从「成交榜-优秀账号排行」页面抽取当前页账号数据
- * 字段：店铺名、粉丝数、阅读数、点击率、支付转化率、GMV、获取时间
- */
+ * 导出字段：排名、店铺名、粉丝数、笔记阅读数、笔记商品点击率�? *          笔记支付转化率、笔记成交金额（元）、获取时�? */
 function collectAccountRankFromDom() {
   const root =
     document.querySelector(".note-rank") ||
@@ -199,7 +190,7 @@ function collectAccountRankFromDom() {
   if (!root) {
     return {
       ok: false,
-      error: "未找到成交榜容器，请确认当前为成交榜页面。"
+      error: "未找到成交榜容器，请确认当前为成交榜页面�?
     };
   }
 
@@ -209,7 +200,7 @@ function collectAccountRankFromDom() {
     root.querySelector("tbody")?.closest("table");
 
   if (!table) {
-    return { ok: false, error: "未找到成交榜表格，请确认页面已完全加载。" };
+    return { ok: false, error: "未找到成交榜表格，请确认页面已完全加载�? };
   }
 
   const headerCells = Array.from(
@@ -217,7 +208,7 @@ function collectAccountRankFromDom() {
   );
 
   if (headerCells.length === 0) {
-    return { ok: false, error: "未找到成交榜表头，请确认页面已完全加载。" };
+    return { ok: false, error: "未找到成交榜表头，请确认页面已完全加载�? };
   }
 
   const columnIndex = {
@@ -232,8 +223,7 @@ function collectAccountRankFromDom() {
     const text = normalizeText(cell.textContent);
     if (!text) return;
 
-    // 成交榜账号列表头有时叫「账号」，有时叫「店铺」
-    if (
+    // 成交榜账号列表头有时叫「账号」，有时叫「店铺�?    if (
       (text.includes("账号") || text.includes("店铺")) &&
       !text.includes("粉丝") &&
       !text.includes("阅读") &&
@@ -254,21 +244,20 @@ function collectAccountRankFromDom() {
   if (columnIndex.accountInfo === -1) {
     return {
       ok: false,
-      error: "未找到账号信息列，请确认当前表格为成交榜-优秀账号排行。"
+      error: "未找到账号信息列，请确认当前表格为成交榜-优秀账号排行�?
     };
   }
 
   const tbody = table.querySelector("tbody");
   if (!tbody) {
-    return { ok: false, error: "未找到成交榜表格主体（tbody）。" };
+    return { ok: false, error: "未找到成交榜表格主体（tbody）�? };
   }
 
   const allRows = Array.from(tbody.querySelectorAll("tr")).filter(
     (tr) => tr.querySelectorAll("td").length > 0
   );
 
-  // 根据配置决定是否跳过第一行
-  const rows = excludeFirstRow ? allRows.slice(1) : allRows;
+  // 每页第一行通常为自营账号，按需求跳�?  const rows = allRows.slice(1);
 
   const getCellText = (cell) =>
     cell
@@ -325,6 +314,7 @@ function collectAccountRankFromDom() {
       clickRate,
       payConversionRate,
       gmv,
+      // 新增：获取时间（�?10 点规则计算）
       fetchDate
     };
   });
@@ -367,7 +357,7 @@ function downloadCsvFromStorage() {
   chrome.storage.local.get(STORAGE_KEY, (data) => {
     const rows = data[STORAGE_KEY] || [];
     if (rows.length === 0) {
-      updatePanelStatus("没有可导出的内容数据，请先采集。");
+      updatePanelStatus("没有可导出的内容数据，请先采集�?);
       return;
     }
 
@@ -376,10 +366,10 @@ function downloadCsvFromStorage() {
       "笔记标题",
       "账号昵称",
       "发布时间",
-      "笔记阅读数",
-      "笔记商品点击率",
-      "笔记支付转化率",
-      "笔记成交金额（元）",
+      "笔记阅读�?,
+      "笔记商品点击�?,
+      "笔记支付转化�?,
+      "笔记成交金额（元�?,
       "获取时间"
     ];
 
@@ -423,7 +413,7 @@ function downloadCsvFromStorage() {
     chrome.storage.local.remove(STORAGE_KEY, () => {
       updatePanelRowCount();
       updatePanelStatus(
-        `已导出 ${rows.length} 行内容数据到 CSV，内容缓存已清空。`
+        `已导�?${rows.length} 行内容数据到 CSV，内容缓存已清空。`
       );
     });
   });
@@ -433,18 +423,18 @@ function downloadAccountCsvFromStorage() {
   chrome.storage.local.get(ACCOUNT_STORAGE_KEY, (data) => {
     const rows = data[ACCOUNT_STORAGE_KEY] || [];
     if (rows.length === 0) {
-      updatePanelStatus("没有可导出的账号数据，请先采集成交榜账号。");
+      updatePanelStatus("没有可导出的账号数据，请先采集成交榜账号�?);
       return;
     }
 
     const header = [
       "排名",
-      "店铺名",
-      "粉丝数",
-      "笔记阅读数",
-      "笔记商品点击率",
-      "笔记支付转化率",
-      "笔记成交金额（元）",
+      "店铺�?,
+      "粉丝�?,
+      "笔记阅读�?,
+      "笔记商品点击�?,
+      "笔记支付转化�?,
+      "笔记成交金额（元�?,
       "获取时间"
     ];
     const lines = [header.map(csvEscape).join(",")];
@@ -486,7 +476,7 @@ function downloadAccountCsvFromStorage() {
     chrome.storage.local.remove(ACCOUNT_STORAGE_KEY, () => {
       updateAccountPanelRowCount();
       updatePanelStatus(
-        `已导出 ${rows.length} 行账号数据到 CSV，账号缓存已清空。`
+        `已导�?${rows.length} 行账号数据到 CSV，账号缓存已清空。`
       );
     });
   });
@@ -518,23 +508,15 @@ function updatePanelStatus(text) {
 function clearStoredRows() {
   chrome.storage.local.remove(STORAGE_KEY, () => {
     updatePanelRowCount();
-    updatePanelStatus("内容缓存已清空。");
+    updatePanelStatus("内容缓存已清空�?);
   });
 }
 
 function clearStoredAccountRows() {
   chrome.storage.local.remove(ACCOUNT_STORAGE_KEY, () => {
     updateAccountPanelRowCount();
-    updatePanelStatus("账号缓存已清空。");
+    updatePanelStatus("账号缓存已清空�?);
   });
-}
-
-function updateFirstRowToggleButton() {
-  const btn = document.getElementById("xhs-toggle-first-row");
-  if (!btn) return;
-  btn.textContent = excludeFirstRow
-    ? "当前：排除每页第 1 行"
-    : "当前：包含每页第 1 行";
 }
 
 function ensureSidePanel() {
@@ -555,21 +537,15 @@ function ensureSidePanel() {
     'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
   panel.style.fontSize = "12px";
   panel.style.color = "#1f2933";
-  panel.style.maxWidth = "340px";
+  panel.style.maxWidth = "320px";
 
   panel.innerHTML = `
-    <div style="margin-bottom:6px;">
-      <button id="xhs-toggle-first-row" style="width:100%;padding:3px 6px;font-size:12px;cursor:pointer;">
-        当前：包含每页第 1 行
-      </button>
-    </div>
-
     <div style="font-weight:600;margin-bottom:6px;">热卖榜优秀内容采集</div>
     <div style="margin-bottom:4px;">
       内容榜缓存：<span id="xhs-note-rank-row-count">0</span>
     </div>
     <div style="margin-bottom:4px;display:flex;flex-wrap:wrap;gap:4px;">
-      <button id="xhs-note-rank-btn-collect" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">采集内容当前页</button>
+      <button id="xhs-note-rank-btn-collect" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">采集内容当前�?/button>
       <button id="xhs-note-rank-btn-download" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">导出内容 CSV</button>
     </div>
     <div style="margin-bottom:8px;">
@@ -593,7 +569,6 @@ function ensureSidePanel() {
 
   document.body.appendChild(panel);
 
-  const btnToggleFirst = document.getElementById("xhs-toggle-first-row");
   const btnCollect = document.getElementById("xhs-note-rank-btn-collect");
   const btnDownload = document.getElementById("xhs-note-rank-btn-download");
   const btnClear = document.getElementById("xhs-note-rank-btn-clear");
@@ -607,25 +582,12 @@ function ensureSidePanel() {
     "xhs-account-rank-btn-clear"
   );
 
-  if (btnToggleFirst) {
-    btnToggleFirst.addEventListener("click", () => {
-      excludeFirstRow = !excludeFirstRow;
-      updateFirstRowToggleButton();
-      updatePanelStatus(
-        excludeFirstRow
-          ? "已设置：采集时排除每页第 1 行。"
-          : "已设置：采集时包含每页第 1 行。"
-      );
-    });
-    updateFirstRowToggleButton();
-  }
-
   if (btnCollect) {
     btnCollect.addEventListener("click", () => {
       updatePanelStatus("正在采集内容榜当前页数据...");
       const result = collectNoteRankFromDom();
       if (!result.ok) {
-        updatePanelStatus(result.error || "采集内容榜失败。");
+        updatePanelStatus(result.error || "采集内容榜失败�?);
         return;
       }
       mergeAndStoreRows(result.rows, (allRows, newRows) => {
@@ -655,7 +617,7 @@ function ensureSidePanel() {
       updatePanelStatus("正在采集成交榜账号当前页数据...");
       const result = collectAccountRankFromDom();
       if (!result.ok) {
-        updatePanelStatus(result.error || "采集成交榜账号失败。");
+        updatePanelStatus(result.error || "采集成交榜账号失败�?);
         return;
       }
       mergeAndStoreAccountRows(result.rows, (allRows, newRows) => {
@@ -693,7 +655,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     } catch (e) {
       sendResponse({
         ok: false,
-        error: e && e.message ? e.message : "采集过程中发生错误。"
+        error: e && e.message ? e.message : "采集过程中发生错误�?
       });
     }
     return true;

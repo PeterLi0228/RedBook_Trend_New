@@ -84,7 +84,8 @@ function downloadCsv() {
       "笔记阅读数",
       "笔记商品点击率",
       "笔记支付转化率",
-      "笔记成交金额（元）"
+      "笔记成交金额（元）",
+      "获取时间"
     ];
 
     const lines = [header.map(csvEscape).join(",")];
@@ -99,7 +100,8 @@ function downloadCsv() {
           row.readCount,
           row.clickRate,
           row.payConversionRate,
-          row.gmv
+          row.gmv,
+          row.fetchDate || ""
         ]
           .map(csvEscape)
           .join(",")
