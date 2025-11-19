@@ -1,14 +1,14 @@
 /* global chrome */
 
-// ±¾µØ´æ´¢ key
-const STORAGE_KEY = "xhsNoteRankRows"; // ÄÚÈİ°ñ£¨±Ê¼ÇÅÅĞĞ£©
-const ACCOUNT_STORAGE_KEY = "xhsAccountRankRows"; // ³É½»°ñÓÅĞãÕËºÅ
+// æœ¬åœ°å­˜å‚¨ key
+const STORAGE_KEY = "xhsNoteRankRows"; // å†…å®¹æ¦œï¼ˆç¬”è®°æ’è¡Œï¼‰
+const ACCOUNT_STORAGE_KEY = "xhsAccountRankRows"; // æˆäº¤æ¦œä¼˜ç§€è´¦å·
 
-// ÊÇ·ñÅÅ³ıÃ¿Ò³µÚÒ»ĞĞ£¨Í¨³£Îª×ÔÓªÕËºÅ£©
-// Ä¬ÈÏ£ºfalse£¨°üº¬µÚÒ»ĞĞ£©
+// æ˜¯å¦æ’é™¤æ¯é¡µç¬¬ä¸€è¡Œï¼ˆé€šå¸¸ä¸ºè‡ªè¥è´¦å·ï¼‰
+// é»˜è®¤ï¼šfalseï¼ˆåŒ…å«ç¬¬ä¸€è¡Œï¼‰
 let excludeFirstRow = false;
 
-// ¹æ·¶»¯±íÍ·/µ¥Ôª¸ñÎÄ±¾
+// è§„èŒƒåŒ–è¡¨å¤´/å•å…ƒæ ¼æ–‡æœ¬
 function normalizeText(text) {
   return (text || "")
     .replace(/\s+/g, "")
@@ -16,8 +16,8 @@ function normalizeText(text) {
     .trim();
 }
 
-// »ñÈ¡¡°Âß¼­ÉÏµÄ»ñÈ¡ÈÕÆÚ¡±£¨Ö»ÓĞÈÕÆÚ£¬²»º¬Ê±¼ä£©
-// ¹æÔò£ºÈç¹ûµ±Ç°Ê±¼ä < 10:00£¬ÔòÊÓÎªÇ°Ò»ÌìµÄÊı¾İ£»·ñÔòÊÓÎªµ±ÌìµÄÊı¾İ
+// è·å–â€œé€»è¾‘ä¸Šçš„è·å–æ—¥æœŸâ€ï¼ˆåªæœ‰æ—¥æœŸï¼Œä¸å«æ—¶é—´ï¼‰
+// è§„åˆ™ï¼šå¦‚æœå½“å‰æ—¶é—´ < 10:00ï¼Œåˆ™è§†ä¸ºå‰ä¸€å¤©çš„æ•°æ®ï¼›å¦åˆ™è§†ä¸ºå½“å¤©çš„æ•°æ®
 function getLogicalFetchDate() {
   const now = new Date();
   const adjusted = new Date(now);
@@ -33,7 +33,7 @@ function getLogicalFetchDate() {
 }
 
 /**
- * ´Ó¡¸ÊĞ³¡ĞĞÇé-±Ê¼ÇÅÅĞĞ¡¹Ò³Ãæ³éÈ¡µ±Ç°Ò³Êı¾İ£¨ÄÚÈİ°ñ£©
+ * ä»ã€Œå¸‚åœºè¡Œæƒ…-ç¬”è®°æ’è¡Œã€é¡µé¢æŠ½å–å½“å‰é¡µæ•°æ®ï¼ˆå†…å®¹æ¦œï¼‰
  */
 function collectNoteRankFromDom() {
   const root =
@@ -44,7 +44,7 @@ function collectNoteRankFromDom() {
   if (!root) {
     return {
       ok: false,
-      error: "Î´ÕÒµ½ note-rank ÈİÆ÷£¬ÇëÈ·ÈÏµ±Ç°Îª±Ê¼ÇÅÅĞĞÒ³Ãæ¡£"
+      error: "æœªæ‰¾åˆ° note-rank å®¹å™¨ï¼Œè¯·ç¡®è®¤å½“å‰ä¸ºç¬”è®°æ’è¡Œé¡µé¢ã€‚"
     };
   }
 
@@ -56,7 +56,7 @@ function collectNoteRankFromDom() {
   if (!table) {
     return {
       ok: false,
-      error: "Î´ÕÒµ½±í¸ñ£¬ÇëÈ·ÈÏÒÑÇĞ»»µ½¡°±Ê¼ÇÅÅĞĞ¡±²¢µÈ´ıÒ³Ãæ¼ÓÔØÍê³É¡£"
+      error: "æœªæ‰¾åˆ°è¡¨æ ¼ï¼Œè¯·ç¡®è®¤å·²åˆ‡æ¢åˆ°â€œç¬”è®°æ’è¡Œâ€å¹¶ç­‰å¾…é¡µé¢åŠ è½½å®Œæˆã€‚"
     };
   }
 
@@ -65,7 +65,7 @@ function collectNoteRankFromDom() {
   );
 
   if (headerCells.length === 0) {
-    return { ok: false, error: "Î´ÕÒµ½±íÍ·£¬ÇëÈ·ÈÏÒ³ÃæÒÑÍêÈ«¼ÓÔØ¡£" };
+    return { ok: false, error: "æœªæ‰¾åˆ°è¡¨å¤´ï¼Œè¯·ç¡®è®¤é¡µé¢å·²å®Œå…¨åŠ è½½ã€‚" };
   }
 
   const columnIndex = {
@@ -81,20 +81,20 @@ function collectNoteRankFromDom() {
     if (!text) return;
 
     if (
-      text.includes("±Ê¼Ç") &&
-      !text.includes("ÔÄ¶Á") &&
-      !text.includes("ÉÌÆ·") &&
-      !text.includes("Ö§¸¶") &&
-      !text.includes("³É½»")
+      text.includes("ç¬”è®°") &&
+      !text.includes("é˜…è¯»") &&
+      !text.includes("å•†å“") &&
+      !text.includes("æ”¯ä»˜") &&
+      !text.includes("æˆäº¤")
     ) {
       columnIndex.noteInfo = index;
-    } else if (text.includes("ÔÄ¶Á")) {
+    } else if (text.includes("é˜…è¯»")) {
       columnIndex.readCount = index;
-    } else if (text.includes("ÉÌÆ·") && text.includes("µã»÷")) {
+    } else if (text.includes("å•†å“") && text.includes("ç‚¹å‡»")) {
       columnIndex.clickRate = index;
-    } else if (text.includes("Ö§¸¶") && text.includes("×ª»¯")) {
+    } else if (text.includes("æ”¯ä»˜") && text.includes("è½¬åŒ–")) {
       columnIndex.payConversionRate = index;
-    } else if (text.includes("³É½»") && text.includes("½ğ¶î")) {
+    } else if (text.includes("æˆäº¤") && text.includes("é‡‘é¢")) {
       columnIndex.gmv = index;
     }
   });
@@ -102,20 +102,20 @@ function collectNoteRankFromDom() {
   if (columnIndex.noteInfo === -1) {
     return {
       ok: false,
-      error: "Î´ÕÒµ½¡°±Ê¼Ç¡±ĞÅÏ¢ÁĞ£¬ÇëÈ·ÈÏµ±Ç°±í¸ñÎª±Ê¼ÇÅÅĞĞ¡£"
+      error: "æœªæ‰¾åˆ°â€œç¬”è®°â€ä¿¡æ¯åˆ—ï¼Œè¯·ç¡®è®¤å½“å‰è¡¨æ ¼ä¸ºç¬”è®°æ’è¡Œã€‚"
     };
   }
 
   const tbody = table.querySelector("tbody");
   if (!tbody) {
-    return { ok: false, error: "Î´ÕÒµ½±í¸ñÖ÷Ìå£¨tbody£©¡£" };
+    return { ok: false, error: "æœªæ‰¾åˆ°è¡¨æ ¼ä¸»ä½“ï¼ˆtbodyï¼‰ã€‚" };
   }
 
   const allRows = Array.from(tbody.querySelectorAll("tr")).filter(
     (tr) => tr.querySelectorAll("td").length > 0
   );
 
-  // ¸ù¾İÅäÖÃ¾ö¶¨ÊÇ·ñÌø¹ıµÚÒ»ĞĞ
+  // æ ¹æ®é…ç½®å†³å®šæ˜¯å¦è·³è¿‡ç¬¬ä¸€è¡Œ
   const rows = excludeFirstRow ? allRows.slice(1) : allRows;
 
   const getCellText = (cell) =>
@@ -159,7 +159,7 @@ function collectNoteRankFromDom() {
     let publishTime = "";
     if (timeEl) {
       const raw = (timeEl.innerText || timeEl.textContent || "").trim();
-      publishTime = raw.replace(/.*?·¢²¼Ê±¼ä[:£º]?\s*/, "");
+      publishTime = raw.replace(/.*?å‘å¸ƒæ—¶é—´[:ï¼š]?\s*/, "");
     }
 
     const getByIndex = (idx) =>
@@ -186,7 +186,7 @@ function collectNoteRankFromDom() {
 }
 
 /**
- * ´Ó¡¸³É½»°ñ-ÓÅĞãÕËºÅÅÅĞĞ¡¹Ò³Ãæ³éÈ¡µ±Ç°Ò³ÕËºÅÊı¾İ
+ * ä»ã€Œæˆäº¤æ¦œ-ä¼˜ç§€è´¦å·æ’è¡Œã€é¡µé¢æŠ½å–å½“å‰é¡µè´¦å·æ•°æ®
  */
 function collectAccountRankFromDom() {
   const root =
@@ -197,7 +197,7 @@ function collectAccountRankFromDom() {
   if (!root) {
     return {
       ok: false,
-      error: "Î´ÕÒµ½³É½»°ñÈİÆ÷£¬ÇëÈ·ÈÏµ±Ç°Îª³É½»°ñÒ³Ãæ¡£"
+      error: "æœªæ‰¾åˆ°æˆäº¤æ¦œå®¹å™¨ï¼Œè¯·ç¡®è®¤å½“å‰ä¸ºæˆäº¤æ¦œé¡µé¢ã€‚"
     };
   }
 
@@ -207,7 +207,7 @@ function collectAccountRankFromDom() {
     root.querySelector("tbody")?.closest("table");
 
   if (!table) {
-    return { ok: false, error: "Î´ÕÒµ½³É½»°ñ±í¸ñ£¬ÇëÈ·ÈÏÒ³ÃæÒÑÍêÈ«¼ÓÔØ¡£" };
+    return { ok: false, error: "æœªæ‰¾åˆ°æˆäº¤æ¦œè¡¨æ ¼ï¼Œè¯·ç¡®è®¤é¡µé¢å·²å®Œå…¨åŠ è½½ã€‚" };
   }
 
   const headerCells = Array.from(
@@ -215,7 +215,7 @@ function collectAccountRankFromDom() {
   );
 
   if (headerCells.length === 0) {
-    return { ok: false, error: "Î´ÕÒµ½³É½»°ñ±íÍ·£¬ÇëÈ·ÈÏÒ³ÃæÒÑÍêÈ«¼ÓÔØ¡£" };
+    return { ok: false, error: "æœªæ‰¾åˆ°æˆäº¤æ¦œè¡¨å¤´ï¼Œè¯·ç¡®è®¤é¡µé¢å·²å®Œå…¨åŠ è½½ã€‚" };
   }
 
   const columnIndex = {
@@ -230,21 +230,21 @@ function collectAccountRankFromDom() {
     const text = normalizeText(cell.textContent);
     if (!text) return;
 
-    // ³É½»°ñÕËºÅÁĞ±íÍ·ÓĞÊ±½Ğ¡¸ÕËºÅ¡¹£¬ÓĞÊ±½Ğ¡¸µêÆÌ¡¹
+    // æˆäº¤æ¦œè´¦å·åˆ—è¡¨å¤´æœ‰æ—¶å«ã€Œè´¦å·ã€ï¼Œæœ‰æ—¶å«ã€Œåº—é“ºã€
     if (
-      (text.includes("ÕËºÅ") || text.includes("µêÆÌ")) &&
-      !text.includes("·ÛË¿") &&
-      !text.includes("ÔÄ¶Á") &&
-      !text.includes("³É½»")
+      (text.includes("è´¦å·") || text.includes("åº—é“º")) &&
+      !text.includes("ç²‰ä¸") &&
+      !text.includes("é˜…è¯»") &&
+      !text.includes("æˆäº¤")
     ) {
       columnIndex.accountInfo = index;
-    } else if (text.includes("ÔÄ¶Á")) {
+    } else if (text.includes("é˜…è¯»")) {
       columnIndex.readCount = index;
-    } else if (text.includes("ÉÌÆ·") && text.includes("µã»÷")) {
+    } else if (text.includes("å•†å“") && text.includes("ç‚¹å‡»")) {
       columnIndex.clickRate = index;
-    } else if (text.includes("Ö§¸¶") && text.includes("×ª»¯")) {
+    } else if (text.includes("æ”¯ä»˜") && text.includes("è½¬åŒ–")) {
       columnIndex.payConversionRate = index;
-    } else if (text.includes("³É½»") && text.includes("½ğ¶î")) {
+    } else if (text.includes("æˆäº¤") && text.includes("é‡‘é¢")) {
       columnIndex.gmv = index;
     }
   });
@@ -252,20 +252,20 @@ function collectAccountRankFromDom() {
   if (columnIndex.accountInfo === -1) {
     return {
       ok: false,
-      error: "Î´ÕÒµ½ÕËºÅĞÅÏ¢ÁĞ£¬ÇëÈ·ÈÏµ±Ç°±í¸ñÎª³É½»°ñ-ÓÅĞãÕËºÅÅÅĞĞ¡£"
+      error: "æœªæ‰¾åˆ°è´¦å·ä¿¡æ¯åˆ—ï¼Œè¯·ç¡®è®¤å½“å‰è¡¨æ ¼ä¸ºæˆäº¤æ¦œ-ä¼˜ç§€è´¦å·æ’è¡Œã€‚"
     };
   }
 
   const tbody = table.querySelector("tbody");
   if (!tbody) {
-    return { ok: false, error: "Î´ÕÒµ½³É½»°ñ±í¸ñÖ÷Ìå£¨tbody£©¡£" };
+    return { ok: false, error: "æœªæ‰¾åˆ°æˆäº¤æ¦œè¡¨æ ¼ä¸»ä½“ï¼ˆtbodyï¼‰ã€‚" };
   }
 
   const allRows = Array.from(tbody.querySelectorAll("tr")).filter(
     (tr) => tr.querySelectorAll("td").length > 0
   );
 
-  // ¸ù¾İÅäÖÃ¾ö¶¨ÊÇ·ñÌø¹ıµÚÒ»ĞĞ
+  // æ ¹æ®é…ç½®å†³å®šæ˜¯å¦è·³è¿‡ç¬¬ä¸€è¡Œ
   const rows = excludeFirstRow ? allRows.slice(1) : allRows;
 
   const getCellText = (cell) =>
@@ -298,7 +298,7 @@ function collectAccountRankFromDom() {
     let fansCount = "";
     if (fansEl) {
       const raw = (fansEl.innerText || fansEl.textContent || "").trim();
-      fansCount = raw.replace(/·ÛË¿/g, "").trim();
+      fansCount = raw.replace(/ç²‰ä¸/g, "").trim();
     }
 
     const readCount =
@@ -365,20 +365,20 @@ function downloadCsvFromStorage() {
   chrome.storage.local.get(STORAGE_KEY, (data) => {
     const rows = data[STORAGE_KEY] || [];
     if (rows.length === 0) {
-      updatePanelStatus("Ã»ÓĞ¿Éµ¼³öµÄÄÚÈİÊı¾İ£¬ÇëÏÈ²É¼¯¡£");
+      updatePanelStatus("æ²¡æœ‰å¯å¯¼å‡ºçš„å†…å®¹æ•°æ®ï¼Œè¯·å…ˆé‡‡é›†ã€‚");
       return;
     }
 
     const header = [
-      "ÅÅÃû",
-      "±Ê¼Ç±êÌâ",
-      "ÕËºÅêÇ³Æ",
-      "·¢²¼Ê±¼ä",
-      "±Ê¼ÇÔÄ¶ÁÊı",
-      "±Ê¼ÇÉÌÆ·µã»÷ÂÊ",
-      "±Ê¼ÇÖ§¸¶×ª»¯ÂÊ",
-      "±Ê¼Ç³É½»½ğ¶î£¨Ôª£©",
-      "»ñÈ¡Ê±¼ä"
+      "æ’å",
+      "ç¬”è®°æ ‡é¢˜",
+      "è´¦å·æ˜µç§°",
+      "å‘å¸ƒæ—¶é—´",
+      "ç¬”è®°é˜…è¯»æ•°",
+      "ç¬”è®°å•†å“ç‚¹å‡»ç‡",
+      "ç¬”è®°æ”¯ä»˜è½¬åŒ–ç‡",
+      "ç¬”è®°æˆäº¤é‡‘é¢ï¼ˆå…ƒï¼‰",
+      "è·å–æ—¶é—´"
     ];
 
     const lines = [header.map(csvEscape).join(",")];
@@ -421,7 +421,7 @@ function downloadCsvFromStorage() {
     chrome.storage.local.remove(STORAGE_KEY, () => {
       updatePanelRowCount();
       updatePanelStatus(
-        `ÒÑµ¼³ö ${rows.length} ĞĞÄÚÈİÊı¾İµ½ CSV£¬ÄÚÈİ»º´æÒÑÇå¿Õ¡£`
+        `å·²å¯¼å‡º ${rows.length} è¡Œå†…å®¹æ•°æ®åˆ° CSVï¼Œå†…å®¹ç¼“å­˜å·²æ¸…ç©ºã€‚`
       );
     });
   });
@@ -431,19 +431,19 @@ function downloadAccountCsvFromStorage() {
   chrome.storage.local.get(ACCOUNT_STORAGE_KEY, (data) => {
     const rows = data[ACCOUNT_STORAGE_KEY] || [];
     if (rows.length === 0) {
-      updatePanelStatus("Ã»ÓĞ¿Éµ¼³öµÄÕËºÅÊı¾İ£¬ÇëÏÈ²É¼¯³É½»°ñÕËºÅ¡£");
+      updatePanelStatus("æ²¡æœ‰å¯å¯¼å‡ºçš„è´¦å·æ•°æ®ï¼Œè¯·å…ˆé‡‡é›†æˆäº¤æ¦œè´¦å·ã€‚");
       return;
     }
 
     const header = [
-      "ÅÅÃû",
-      "µêÆÌÃû",
-      "·ÛË¿Êı",
-      "±Ê¼ÇÔÄ¶ÁÊı",
-      "±Ê¼ÇÉÌÆ·µã»÷ÂÊ",
-      "±Ê¼ÇÖ§¸¶×ª»¯ÂÊ",
-      "±Ê¼Ç³É½»½ğ¶î£¨Ôª£©",
-      "»ñÈ¡Ê±¼ä"
+      "æ’å",
+      "åº—é“ºå",
+      "ç²‰ä¸æ•°",
+      "ç¬”è®°é˜…è¯»æ•°",
+      "ç¬”è®°å•†å“ç‚¹å‡»ç‡",
+      "ç¬”è®°æ”¯ä»˜è½¬åŒ–ç‡",
+      "ç¬”è®°æˆäº¤é‡‘é¢ï¼ˆå…ƒï¼‰",
+      "è·å–æ—¶é—´"
     ];
     const lines = [header.map(csvEscape).join(",")];
 
@@ -484,7 +484,7 @@ function downloadAccountCsvFromStorage() {
     chrome.storage.local.remove(ACCOUNT_STORAGE_KEY, () => {
       updateAccountPanelRowCount();
       updatePanelStatus(
-        `ÒÑµ¼³ö ${rows.length} ĞĞÕËºÅÊı¾İµ½ CSV£¬ÕËºÅ»º´æÒÑÇå¿Õ¡£`
+        `å·²å¯¼å‡º ${rows.length} è¡Œè´¦å·æ•°æ®åˆ° CSVï¼Œè´¦å·ç¼“å­˜å·²æ¸…ç©ºã€‚`
       );
     });
   });
@@ -516,14 +516,14 @@ function updatePanelStatus(text) {
 function clearStoredRows() {
   chrome.storage.local.remove(STORAGE_KEY, () => {
     updatePanelRowCount();
-    updatePanelStatus("ÄÚÈİ»º´æÒÑÇå¿Õ¡£");
+    updatePanelStatus("å†…å®¹ç¼“å­˜å·²æ¸…ç©ºã€‚");
   });
 }
 
 function clearStoredAccountRows() {
   chrome.storage.local.remove(ACCOUNT_STORAGE_KEY, () => {
     updateAccountPanelRowCount();
-    updatePanelStatus("ÕËºÅ»º´æÒÑÇå¿Õ¡£");
+    updatePanelStatus("è´¦å·ç¼“å­˜å·²æ¸…ç©ºã€‚");
   });
 }
 
@@ -531,17 +531,17 @@ function updateFirstRowToggleButton() {
   const btn = document.getElementById("xhs-toggle-first-row");
   if (!btn) return;
   btn.textContent = excludeFirstRow
-    ? "µ±Ç°£ºÅÅ³ıÃ¿Ò³µÚ 1 ĞĞ"
-    : "µ±Ç°£º°üº¬Ã¿Ò³µÚ 1 ĞĞ";
+    ? "å½“å‰ï¼šæ’é™¤æ¯é¡µç¬¬ 1 è¡Œ"
+    : "å½“å‰ï¼šåŒ…å«æ¯é¡µç¬¬ 1 è¡Œ";
 }
 
-// ¼ì²éÒ³Ãæ×óÏÂ½ÇµÄÃ¿Ò³¼ÇÂ¼ÊıÏÂÀ­£¬ÊÇ·ñÒÑ¾­ÊÇ 50 Ìõ
+// æ£€æŸ¥é¡µé¢å·¦ä¸‹è§’çš„æ¯é¡µè®°å½•æ•°ä¸‹æ‹‰ï¼Œæ˜¯å¦å·²ç»æ˜¯ 50 æ¡
 function isPageSize50() {
   const wrapper = document.querySelector(
     ".d-select-wrapper.d-inline-block[hideafterselect='true']"
   );
   if (!wrapper) {
-    return null; // Î´ÕÒµ½¿Ø¼ş
+    return null; // æœªæ‰¾åˆ°æ§ä»¶
   }
   const text = (wrapper.innerText || wrapper.textContent || "")
     .replace(/\s+/g, "")
@@ -552,7 +552,7 @@ function isPageSize50() {
   return digits === "50";
 }
 
-// È·±£Ã¿Ò³¼ÇÂ¼ÊıÎª 50£»·ñÔò×Ô¶¯¹ö¶¯µ½µ×²¿²¢ÌáÊ¾ÓÃ»§ÊÖ¶¯ÇĞ»»
+// ç¡®ä¿æ¯é¡µè®°å½•æ•°ä¸º 50ï¼›å¦åˆ™è‡ªåŠ¨æ»šåŠ¨åˆ°åº•éƒ¨å¹¶æç¤ºç”¨æˆ·æ‰‹åŠ¨åˆ‡æ¢
 function ensurePageSize50OrWarn() {
   const result = isPageSize50();
   if (result === true) {
@@ -583,11 +583,11 @@ function ensurePageSize50OrWarn() {
 
   if (result === false) {
     updatePanelStatus(
-      "µ±Ç°Ã¿Ò³¼ÇÂ¼Êı²»ÊÇ 50 Ìõ£¬ÇëÏÈÔÚÒ³Ãæ×óÏÂ½Ç½«Ã¿Ò³¼ÇÂ¼ÊıÇĞ»»Îª 50£¬ÔÙµã»÷²É¼¯¡£"
+      "å½“å‰æ¯é¡µè®°å½•æ•°ä¸æ˜¯ 50 æ¡ï¼Œè¯·å…ˆåœ¨é¡µé¢å·¦ä¸‹è§’å°†æ¯é¡µè®°å½•æ•°åˆ‡æ¢ä¸º 50ï¼Œå†ç‚¹å‡»é‡‡é›†ã€‚"
     );
   } else {
     updatePanelStatus(
-      "Î´ÄÜ¼ì²âµ½¼ÇÂ¼ÊıÏÂÀ­¿Ø¼ş£¬ÇëÈ·ÈÏÒ³Ãæ¼ÓÔØÍê³É£¬²¢½«Ã¿Ò³¼ÇÂ¼ÊıÇĞ»»Îª 50 ºóÔÙ²É¼¯¡£"
+      "æœªèƒ½æ£€æµ‹åˆ°è®°å½•æ•°ä¸‹æ‹‰æ§ä»¶ï¼Œè¯·ç¡®è®¤é¡µé¢åŠ è½½å®Œæˆï¼Œå¹¶å°†æ¯é¡µè®°å½•æ•°åˆ‡æ¢ä¸º 50 åå†é‡‡é›†ã€‚"
     );
   }
 
@@ -617,37 +617,37 @@ function ensureSidePanel() {
   panel.innerHTML = `
     <div style="margin-bottom:6px;">
       <button id="xhs-toggle-first-row" style="width:100%;padding:3px 6px;font-size:12px;cursor:pointer;">
-        µ±Ç°£º°üº¬Ã¿Ò³µÚ 1 ĞĞ
+        å½“å‰ï¼šåŒ…å«æ¯é¡µç¬¬ 1 è¡Œ
       </button>
     </div>
 
-    <div style="font-weight:600;margin-bottom:6px;">ÈÈÂô°ñÓÅĞãÄÚÈİ²É¼¯</div>
+    <div style="font-weight:600;margin-bottom:6px;">çƒ­å–æ¦œä¼˜ç§€å†…å®¹é‡‡é›†</div>
     <div style="margin-bottom:4px;">
-      ÄÚÈİ°ñ»º´æ£º<span id="xhs-note-rank-row-count">0</span>
+      å†…å®¹æ¦œç¼“å­˜ï¼š<span id="xhs-note-rank-row-count">0</span>
     </div>
     <div style="margin-bottom:4px;display:flex;flex-wrap:wrap;gap:4px;">
-      <button id="xhs-note-rank-btn-collect" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">²É¼¯ÄÚÈİµ±Ç°Ò³</button>
-      <button id="xhs-note-rank-btn-download" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">µ¼³öÄÚÈİ CSV</button>
+      <button id="xhs-note-rank-btn-collect" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">é‡‡é›†å†…å®¹å½“å‰é¡µ</button>
+      <button id="xhs-note-rank-btn-download" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">å¯¼å‡ºå†…å®¹ CSV</button>
     </div>
     <div style="margin-bottom:8px;">
-      <button id="xhs-note-rank-btn-clear" style="width:100%;padding:3px 6px;font-size:12px;cursor:pointer;">Çå¿ÕÄÚÈİ»º´æ</button>
+      <button id="xhs-note-rank-btn-clear" style="width:100%;padding:3px 6px;font-size:12px;cursor:pointer;">æ¸…ç©ºå†…å®¹ç¼“å­˜</button>
     </div>
 
-    <div style="font-weight:600;margin:4px 0 4px;">³É½»°ñÓÅĞãÕËºÅ²É¼¯</div>
+    <div style="font-weight:600;margin:4px 0 4px;">æˆäº¤æ¦œä¼˜ç§€è´¦å·é‡‡é›†</div>
     <div style="margin-bottom:4px;">
-      ³É½»°ñÕËºÅ»º´æ£º<span id="xhs-account-rank-row-count">0</span>
+      æˆäº¤æ¦œè´¦å·ç¼“å­˜ï¼š<span id="xhs-account-rank-row-count">0</span>
     </div>
     <div style="margin-bottom:4px;display:flex;flex-wrap:wrap;gap:4px;">
-      <button id="xhs-account-rank-btn-collect" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">²É¼¯³É½»°ñÕËºÅµ±Ç°Ò³</button>
-      <button id="xhs-account-rank-btn-download" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">µ¼³öÕËºÅ CSV</button>
+      <button id="xhs-account-rank-btn-collect" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">é‡‡é›†æˆäº¤æ¦œè´¦å·å½“å‰é¡µ</button>
+      <button id="xhs-account-rank-btn-download" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">å¯¼å‡ºè´¦å· CSV</button>
     </div>
     <div style="margin-bottom:4px;">
-      <button id="xhs-account-rank-btn-clear" style="width:100%;padding:3px 6px;font-size:12px;cursor:pointer;">Çå¿ÕÕËºÅ»º´æ</button>
+      <button id="xhs-account-rank-btn-clear" style="width:100%;padding:3px 6px;font-size:12px;cursor:pointer;">æ¸…ç©ºè´¦å·ç¼“å­˜</button>
     </div>
 
     <div style="margin-bottom:4px;display:flex;flex-wrap:wrap;gap:4px;">
-      <button id="xhs-scroll-to-top" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">¹ö¶¯µ½Ò³Ãæ¶¥²¿</button>
-      <button id="xhs-scroll-to-bottom" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">¹ö¶¯µ½Ò³Ãæµ×²¿</button>
+      <button id="xhs-scroll-to-top" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">æ»šåŠ¨åˆ°é¡µé¢é¡¶éƒ¨</button>
+      <button id="xhs-scroll-to-bottom" style="flex:1 0 90px;padding:3px 6px;font-size:12px;cursor:pointer;">æ»šåŠ¨åˆ°é¡µé¢åº•éƒ¨</button>
     </div>
 
     <div id="xhs-note-rank-status" style="min-height:1.2em;color:#6b7280;"></div>
@@ -677,8 +677,8 @@ function ensureSidePanel() {
       updateFirstRowToggleButton();
       updatePanelStatus(
         excludeFirstRow
-          ? "ÒÑÉèÖÃ£º²É¼¯Ê±ÅÅ³ıÃ¿Ò³µÚ 1 ĞĞ¡£"
-          : "ÒÑÉèÖÃ£º²É¼¯Ê±°üº¬Ã¿Ò³µÚ 1 ĞĞ¡£"
+          ? "å·²è®¾ç½®ï¼šé‡‡é›†æ—¶æ’é™¤æ¯é¡µç¬¬ 1 è¡Œã€‚"
+          : "å·²è®¾ç½®ï¼šé‡‡é›†æ—¶åŒ…å«æ¯é¡µç¬¬ 1 è¡Œã€‚"
       );
     });
     updateFirstRowToggleButton();
@@ -689,16 +689,16 @@ function ensureSidePanel() {
       if (!ensurePageSize50OrWarn()) {
         return;
       }
-      updatePanelStatus("ÕıÔÚ²É¼¯ÄÚÈİ°ñµ±Ç°Ò³Êı¾İ...");
+      updatePanelStatus("æ­£åœ¨é‡‡é›†å†…å®¹æ¦œå½“å‰é¡µæ•°æ®...");
       const result = collectNoteRankFromDom();
       if (!result.ok) {
-        updatePanelStatus(result.error || "²É¼¯ÄÚÈİ°ñÊ§°Ü¡£");
+        updatePanelStatus(result.error || "é‡‡é›†å†…å®¹æ¦œå¤±è´¥ã€‚");
         return;
       }
       mergeAndStoreRows(result.rows, (allRows, newRows) => {
         updatePanelRowCount();
         updatePanelStatus(
-          `ÄÚÈİ°ñ²É¼¯Íê³É£¬±¾´ÎĞÂÔö ${newRows.length} ĞĞ£¬×Ü¼Æ ${allRows.length} ĞĞ¡£`
+          `å†…å®¹æ¦œé‡‡é›†å®Œæˆï¼Œæœ¬æ¬¡æ–°å¢ ${newRows.length} è¡Œï¼Œæ€»è®¡ ${allRows.length} è¡Œã€‚`
         );
       });
     });
@@ -706,7 +706,7 @@ function ensureSidePanel() {
 
   if (btnDownload) {
     btnDownload.addEventListener("click", () => {
-      updatePanelStatus("ÕıÔÚµ¼³öÄÚÈİ CSV...");
+      updatePanelStatus("æ­£åœ¨å¯¼å‡ºå†…å®¹ CSV...");
       downloadCsvFromStorage();
     });
   }
@@ -722,16 +722,16 @@ function ensureSidePanel() {
       if (!ensurePageSize50OrWarn()) {
         return;
       }
-      updatePanelStatus("ÕıÔÚ²É¼¯³É½»°ñÕËºÅµ±Ç°Ò³Êı¾İ...");
+      updatePanelStatus("æ­£åœ¨é‡‡é›†æˆäº¤æ¦œè´¦å·å½“å‰é¡µæ•°æ®...");
       const result = collectAccountRankFromDom();
       if (!result.ok) {
-        updatePanelStatus(result.error || "²É¼¯³É½»°ñÕËºÅÊ§°Ü¡£");
+        updatePanelStatus(result.error || "é‡‡é›†æˆäº¤æ¦œè´¦å·å¤±è´¥ã€‚");
         return;
       }
       mergeAndStoreAccountRows(result.rows, (allRows, newRows) => {
         updateAccountPanelRowCount();
         updatePanelStatus(
-          `³É½»°ñÕËºÅ²É¼¯Íê³É£¬±¾´ÎĞÂÔö ${newRows.length} ĞĞ£¬×Ü¼Æ ${allRows.length} ĞĞ¡£`
+          `æˆäº¤æ¦œè´¦å·é‡‡é›†å®Œæˆï¼Œæœ¬æ¬¡æ–°å¢ ${newRows.length} è¡Œï¼Œæ€»è®¡ ${allRows.length} è¡Œã€‚`
         );
       });
     });
@@ -739,7 +739,7 @@ function ensureSidePanel() {
 
   if (btnAccountDownload) {
     btnAccountDownload.addEventListener("click", () => {
-      updatePanelStatus("ÕıÔÚµ¼³öÕËºÅ CSV...");
+      updatePanelStatus("æ­£åœ¨å¯¼å‡ºè´¦å· CSV...");
       downloadAccountCsvFromStorage();
     });
   }
@@ -808,7 +808,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (!ensurePageSize50OrWarn()) {
         sendResponse({
           ok: false,
-          error: "ÇëÏÈ½«Ã¿Ò³¼ÇÂ¼ÊıÇĞ»»Îª 50£¬ÔÙ²É¼¯¡£"
+          error: "è¯·å…ˆå°†æ¯é¡µè®°å½•æ•°åˆ‡æ¢ä¸º 50ï¼Œå†é‡‡é›†ã€‚"
         });
         return true;
       }
@@ -817,7 +817,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     } catch (e) {
       sendResponse({
         ok: false,
-        error: e && e.message ? e.message : "²É¼¯¹ı³ÌÖĞ·¢Éú´íÎó¡£"
+        error: e && e.message ? e.message : "é‡‡é›†è¿‡ç¨‹ä¸­å‘ç”Ÿé”™è¯¯ã€‚"
       });
     }
     return true;
@@ -825,7 +825,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return undefined;
 });
 
-// Ò³Ãæ¼ÓÔØÍê³Éºó×Ô¶¯¹ÒÔØÓÒ²à¹Ì¶¨¹¤¾ßÌõ
+// é¡µé¢åŠ è½½å®Œæˆåè‡ªåŠ¨æŒ‚è½½å³ä¾§å›ºå®šå·¥å…·æ¡
 if (document.readyState === "loading") {
   window.addEventListener("DOMContentLoaded", ensureSidePanel);
 } else {
