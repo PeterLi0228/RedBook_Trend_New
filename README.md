@@ -200,6 +200,51 @@ python3 feishu_api.py
 python3 test_single_upload.py
 ```
 
+---
+
+## 八、数据管理后台（Flask API + React 前端）
+
+> 新增的「Data Management System」目录内包含本地管理后台。后端使用现有 `feishu_api.py`，并新增 `/api/note_rank`、`/api/account_rank`、`/api/audit_log` 等查询接口；前端用 React + Vite + Ant Design。
+
+### 1. 启动顺序
+
+1. 先启动后端（同第 3 节）：`python feishu_api.py`（或 `python3`）。
+2. 前端：
+   ```bash
+   cd "Data Management System/frontend"
+   npm install          # 首次执行
+   npm run dev          # 默认 5173 端口
+   ```
+3. 浏览器访问 `http://localhost:5173`，即可看到「笔记榜 / 账号榜 / 审计日志」三个 Tab 页面。
+
+### 2. 前端功能概览
+
+- 列表分页、关键词/日期筛选，与后端 `/api/*` 同步。
+- 每列支持二次筛选（列头小放大镜），排名列来自后端自动生成。
+- 账号/笔记 Tab 默认按 `fetch_date desc, created_at desc` 排序。
+
+### 3. 后端 API 约定
+
+| 路径 | 方法 | 说明 | 常用参数 |
+| --- | --- | --- | --- |
+| `/api/note_rank` | GET | 笔记榜列表 | `page`, `page_size`, `q`, `fetch_date_from`, `fetch_date_to` |
+| `/api/account_rank` | GET | 账号榜列表 | `page`, `page_size`, `q`, `fetch_date_from`, `fetch_date_to` |
+| `/api/audit_log` | GET | 审计日志 | `page`, `page_size`, `action`, `detail_q`, `created_from`, `created_to` |
+
+返回统一结构：
+
+```json
+{
+  "ok": true,
+  "data": {
+    "items": [],
+    "total": 0
+  }
+}
+```
+
+若需要扩展增删改导出，可继续在 `Data Management System/frontend` 与 `feishu_api.py` 中迭代。***
+
 以后只要记住这三步：**改好 config_local → 跑 feishu_api → 加载扩展并在榜单页面点采集+上传**，就可以复用整个链路。
 
 # 飞书api接口文档
