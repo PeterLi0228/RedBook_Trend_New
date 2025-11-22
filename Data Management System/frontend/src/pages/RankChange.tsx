@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Card,
-  Segmented,
   Space,
   Table,
   Tag,
@@ -29,17 +28,21 @@ const metricLabels: Record<string, string> = {
 
 type RankType = "note" | "account";
 
-export default function RankChangePage() {
-  const [viewType, setViewType] = useState<RankType>("note");
+interface RankChangeProps {
+  viewType: RankType;
+  title: string;
+}
+
+export default function RankChangePage({ viewType, title }: RankChangeProps) {
   const [data, setData] = useState<RankChangeResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchData = async (type: RankType) => {
+  const fetchData = async () => {
     setLoading(true);
     try {
       const resp = await api.get<{ ok: boolean; data: RankChangeResponse; error?: string }>(
         "/rank_change",
-        { params: { type } }
+        { params: { type: viewType } }
       );
       if (!resp.data.ok) {
         throw new Error(resp.data.error || "接口返回错误");
@@ -48,14 +51,13 @@ export default function RankChangePage() {
     } catch (err: any) {
       console.error(err);
       message.error(err?.message || "加载排名变化失败");
-      setData(null);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData(viewType);
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewType]);
 
@@ -87,8 +89,7 @@ export default function RankChangePage() {
     const metricColumns = metrics.map((key) => ({
       title: metricLabels[key],
       dataIndex: key,
-      render: (_value: unknown, record: RankChangeItem) =>
-        renderMetric(key, record),
+      render: (_value: unknown, record: RankChangeItem) => renderMetric(key, record),
       width: 150
     }));
 
@@ -103,41 +104,37 @@ export default function RankChangePage() {
   return (
     <Space direction="vertical" style={{ width: "100%" }} size="middle">
       <Card>
-        <Space
-          direction="vertical"
-          style={{ width: "100%" }}
-          size="middle"
-        >
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Space direction="vertical" style={{ width: "100%" }} size="middle">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography.Title level={5} style={{ margin: 0 }}>
-              排名变化趋势
+              {title}
             </Typography.Title>
-            <Segmented
-              options={[
-                { label: "笔记榜", value: "note" },
-                { label: "账号榜", value: "account" }
-              ]}
-              value={viewType}
-              onChange={(val) => setViewType(val as RankType)}
-            />
           </div>
           <Alert type="info" message={description} showIcon />
+          <Table<RankChangeItem>
+            rowKey="key"
+            loading={loading}
+            columns={columns}
+            dataSource={data?.items || []}
+            pagination={{
+              pageSize: 100,
+              showSizeChanger: false,
+              position: ["bottomRight"],
+              showTotal: (tot) => `共 ${tot} 条`
+            }}
+            locale={{
+              emptyText: data?.current_date
+                ? "没有找到数据"
+                : "需要至少两天的数据才能比较排名变化"
+            }}
+            scroll={{ x: 900 }}
+            sticky={{
+              offsetHeader: 0,
+              offsetScroll: 0
+            }}
+          />
         </Space>
       </Card>
-
-      <Table<RankChangeItem>
-        rowKey="key"
-        loading={loading}
-        columns={columns}
-        dataSource={data?.items || []}
-        pagination={{ pageSize: 20 }}
-        locale={{
-          emptyText: data?.current_date
-            ? "没有找到数据"
-            : "需要至少两天的数据才能比较排名变化"
-        }}
-        scroll={{ x: 900 }}
-      />
     </Space>
   );
 }

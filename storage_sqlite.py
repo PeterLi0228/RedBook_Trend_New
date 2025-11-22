@@ -332,7 +332,7 @@ def _fetch_ranked_rows(
   fetch_date: str,
   columns: List[str],
   key_builder,
-) -> Dict[str, Dict[str, Any]]:
+) -> List[Dict[str, Any]]:
   select_cols = ", ".join(columns)
   cursor = conn.execute(
     f"""
@@ -343,28 +343,33 @@ def _fetch_ranked_rows(
     """,
     (fetch_date,),
   )
-  ranked: Dict[str, Dict[str, Any]] = {}
+  ranked: List[Dict[str, Any]] = []
   for idx, row in enumerate(cursor.fetchall(), start=1):
     record = dict(row)
     record["rank"] = idx
     key = key_builder(record)
     record["__key"] = key
-    if key not in ranked:
-      ranked[key] = record
+    ranked.append(record)
   return ranked
 
 
 def _build_rank_change_items(
-  current_rows: Dict[str, Dict[str, Any]],
-  previous_rows: Dict[str, Dict[str, Any]],
+  current_rows: List[Dict[str, Any]],
+  previous_rows: List[Dict[str, Any]],
   label_fields: List[str],
   metric_fields: List[str],
 ) -> List[Dict[str, Any]]:
   items: List[Dict[str, Any]] = []
-  sorted_current = sorted(current_rows.values(), key=lambda r: r["rank"])
+  prev_lookup: Dict[str, List[Dict[str, Any]]] = {}
+  for prev in previous_rows:
+    key = prev.get("__key", "")
+    prev_lookup.setdefault(key, []).append(prev)
+
+  sorted_current = sorted(current_rows, key=lambda r: r["rank"])
   for record in sorted_current:
     key = record.get("__key", "")
-    prev = previous_rows.get(key)
+    queue = prev_lookup.get(key)
+    prev = queue.pop(0) if queue else None
     item: Dict[str, Any] = {
       "key": key,
       "current_rank": record["rank"],

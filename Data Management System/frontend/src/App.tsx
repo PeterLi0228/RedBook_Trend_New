@@ -23,8 +23,10 @@ export default function App() {
     switch (activePage) {
       case "account":
         return <AccountRankPage />;
-      case "rank-change":
-        return <RankChangePage />;
+      case "rank-change-note":
+        return <RankChangePage viewType="note" title="内容榜排名变化" />;
+      case "rank-change-account":
+        return <RankChangePage viewType="account" title="账号榜排名变化" />;
       case "audit":
         return <AuditLogPage />;
       case "note":
@@ -35,7 +37,17 @@ export default function App() {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider breakpoint="lg" collapsedWidth={0} width={220}>
+      <Sider
+        breakpoint="lg"
+        collapsedWidth={0}
+        width={220}
+        style={{
+          height: "100vh",
+          position: "sticky",
+          top: 0,
+          overflow: "auto"
+        }}
+      >
         <div
           style={{
             height: 64,
@@ -66,9 +78,14 @@ export default function App() {
               label: "账号榜概览"
             },
             {
-              key: "rank-change",
+              key: "rank-change-note",
               icon: <RiseOutlined />,
-              label: "排名变化"
+              label: "内容榜排名变化"
+            },
+            {
+              key: "rank-change-account",
+              icon: <RiseOutlined />,
+              label: "账号榜排名变化"
             },
             {
               key: "audit",

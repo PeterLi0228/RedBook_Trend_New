@@ -31,7 +31,7 @@ export default function NoteRankPage() {
   const [loading, setLoading] = useState(false);
   const [pageState, setPageState] = useState({
     page: 1,
-    pageSize: 20
+    pageSize: 100
   });
   const [filters, setFilters] = useState<Filters>({});
   const [columnSearch, setColumnSearch] = useState<Record<string, string>>({});
@@ -298,10 +298,16 @@ export default function NoteRankPage() {
           current: pageState.page,
           pageSize: pageState.pageSize,
           total,
-          showSizeChanger: true
+          showSizeChanger: false,
+          position: ["bottomRight"],
+          showTotal: (tot) => `共 ${tot} 条`
         }}
         onChange={handleTableChange}
         scroll={{ x: 1200 }}
+        sticky={{
+          offsetHeader: 0,
+          offsetScroll: 0
+        }}
       />
     </Space>
   );
